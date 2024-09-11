@@ -49,13 +49,21 @@ export async function getSimilarMovies(req,res){
     }
 }
 
-export async function getMoviesByCategory(req,res){
-    let {category} = req.params;
+export async function getMoviesByCategory(req, res) {
+    let { category } = req.params;
+    
     try {
-        let data = await fetchFromTMDB(`https://api.themoviedb.org/3/movie/${category}?language=en-US&page=1`);
-        res.status(200).json({success:true,content:data.results})
+        // Ensure you include your API key in the request
+        let data = await fetchFromTMDB(`https://api.themoviedb.org/3/movie/${category}?api_key=YOUR_API_KEY&language=en-US&page=1`);
+
+        // Check if the data exists and contains results
+        if (data && data.results) {
+            res.status(200).json({ success: true, content: data.results });
+        } else {
+            res.status(404).json({ success: false, message: "Category not found" });
+        }
     } catch (error) {
-        console.log("Some error in category controller",error.message);
-        res.status(500).json({success:false,message:"Internal Server Error"});
+        console.log(error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 }
